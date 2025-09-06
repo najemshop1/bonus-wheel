@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>عجلة BONUS BUY - لوحة التحكم</title>
+<style>
+:root{
+  --primary-bg: #0a3d2a;   
+  --secondary-bg: #16213e;
+  --accent-purple: #533483;
+  --accent-blue: #0f3460;
+  --gold: #f5c542;
+  --text-light: #ffffff;
+  --text-secondary: #b8b8b8;
+  --bg-dark: #0a3d2a;        
+  --primary: #1e5631;
+  --accent: #27ae60;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body{
+  margin:0;
+  background: var(--primary-bg);
+  color: var(--text-light);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  display: flex;
+  gap: 30px;
+  padding: 20px;
+}
+
+/* لوحة التحكم */
+#controlPanel {
+  background: rgba(30, 86, 49, 0.4);
+  padding: 25px;
+  border-radius: 15px;
+  width: 350px;
+  border: 1px solid var(--accent);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+#wheelContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+h1 {
+  text-align: center;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+#bonusTitle {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--text-light);
+  background: linear-gradient(45deg, var(--accent-purple), var(--accent-blue));
+  padding: 15px 40px;
+  border-radius: 15px;
+  border: 3px solid var(--gold);
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+#wheelWrap{
+  position:relative;
+  width: 600px;
+  height: 600px;
+  margin-bottom: 30px;
+}
+
+canvas{
+  border-radius:50%;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(245, 197, 66, 0.3);
+}
+
+#arrow{
+  position:absolute;
+  top:-35px;
+  left:50%;
+  transform:translateX(-50%);
+  width:0;height:0;
+  border-left:25px solid transparent;
+  border-right:25px solid transparent;
+  border-top:45px solid var(--gold);
+  z-index:10;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+#logo{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:150px;height:150px;
+  border-radius:50%;
+  border: 2px solid rgba(245, 197, 66, 0.4);
+  pointer-events:none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+#winner{
+  margin-top:20px;
+  font-size:1.3rem;
+  color: var(--gold);
+  font-weight: bold;
+  text-align: center;
+  min-height: 30px;
+}
+
+/* عناصر لوحة التحكم */
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--primary);
+  color: var(--text-light);
+  font-size: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 8px;
+  background: var(--gold);
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+#spinButton {
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.2rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(39, 174, 96, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(39, 174, 96, 0.8); }
+}
+
+#gamesList {
+  margin-top: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.gameItem {
+  background: var(--primary);
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gameItem button {
+  width: auto;
+  padding: 6px 12px;
+  background: #c0392b;
+  color: #fff;
+}
+
+#gamesCount {
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: var(--gold);
+}
+
+/* تحسينات للشاشات الصغيرة */
+@media (max-width: 1024px) {
+  body { 
+    flex-direction: column; 
+  }
+  #controlPanel { 
+    width: 100%; 
+    max-width: 500px; 
+    margin: 0 auto; 
+  }
+  #wheelWrap {
+    width: 400px;
+    height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  body { 
+    padding: 10px; 
+  }
+  #wheelWrap {
+    width: 400px;
+    height: 400px;
+  }
+  #bonusTitle {
+    font-size: 1.8rem;
+    padding: 10px 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  #wheelWrap {
+    width: 320px;
+    height: 320px;
+  }
+  #bonusTitle {
+    font-size: 1.4rem;
+    padding: 8px 20px;
+  }
+  #logo {
+    width: 100px;
+    height: 100px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="controlPanel">
+  <h1>لوحة التحكم</h1>
+
+  <div id="gamesCount">عدد الألعاب: <span id="count">0</span></div>
+
+  <input id="nameInput" placeholder="اسم اللعبة" maxlength="50">
+  <input id="imageInput" placeholder="رابط صورة اللعبة">
+
+  <button onclick="addGame()">إضافة لعبة</button>
+  <button id="spinButton" onclick="spinWheel()">🎯 تدوير العجلة</button>
+
+  <div id="gamesList"></div>
+</div>
+
+<div id="wheelContainer">
+  <div id="bonusTitle">BONUS BUY</div>
+
+  <div id="wheelWrap">
+    <div id="arrow"></div>
+    <canvas id="wheel" width="600" height="600"></canvas>
+    <img id="logo" src="https://firebasestorage.googleapis.com/v0/b/nodal-empire-462921-b4/o/NajemGaming.png?alt=media&token=44e3e93d-807e-4f74-a9ce-b04ca39e2bd1">
+    <!-- Winner image appears here (above the wheel) -->
+    <img id="winnerImg" style="position:absolute;top:20px;left:50%;transform:translateX(-50%);width:140px;height:140px;border-radius:12px;border:3px solid var(--gold);display:none;z-index:20;object-fit:cover;">
+  </div>
+
+  <div id="winner"></div>
+</div>
+
+<script>
+const GAMES_KEY = 'games';
+
+// وظائف لوحة التحكم
+function qs(id) { return document.getElementById(id); }
+
+function getGames() {
+  return JSON.parse(localStorage.getItem(GAMES_KEY) || '[]');
+}
+
+function setGames(arr) {
+  localStorage.setItem(GAMES_KEY, JSON.stringify(arr));
+}
+
+function updateCount() {
+  qs('count').textContent = getGames().length;
+}
+
+function renderGamesList() {
+  const list = qs('gamesList');
+  list.innerHTML = '';
+  getGames().forEach((g, idx) => {
+    const div = document.createElement('div');
+    div.className = 'gameItem';
+    div.innerHTML = `
+      <span>${g.name.length > 25 ? g.name.slice(0, 25) + '…' : g.name}</span>
+      <button onclick="deleteGame(${idx})">حذف</button>`;
+    list.appendChild(div);
+  });
+  updateCount();
+  draw(); // إعادة رسم العجلة
+}
+
+function addGame() {
+  const name = qs('nameInput').value.trim();
+  const img = qs('imageInput').value.trim();
+  if (!name || !img) return alert('يرجى إدخال اسم اللعبة ورابط الصورة');
+  try { new URL(img); } catch { return alert('رابط الصورة غير صالح'); }
+
+  const games = getGames();
+  if (games.some(g => g.name.toLowerCase() === name.toLowerCase()))
+    return alert('اللعبة موجودة بالفعل');
+
+  games.push({ name, img });
+  setGames(games);
+  qs('nameInput').value = '';
+  qs('imageInput').value = '';
+  renderGamesList();
+}
+
+function deleteGame(idx) {
+  if (!confirm('هل أنت متأكد من الحذف؟')) return;
+  const games = getGames();
+  games.splice(idx, 1);
+  setGames(games);
+  renderGamesList();
+}
+
+// وظائف العجلة
+const canvas = document.getElementById('wheel');
+const ctx = canvas.getContext('2d');
+const center = 300;
+const radius = 270;
+let angle = 0;
+let spinning = false;
+
+const colors = [
+  '#533483','#0f3460','#1a1a2e','#16213e','#2d1b69','#0e4b99'
+];
+
+function draw(){
+  const list = getGames();
+  const n = list.length;
+  if(!n){ ctx.clearRect(0,0,600,600); return; }
+
+  const step = 2 * Math.PI / n;
+  ctx.clearRect(0,0,600,600);
+
+  for(let i=0;i<n;i++){
+    ctx.beginPath();
+    ctx.moveTo(center,center);
+    ctx.arc(center,center,radius,i*step,(i+1)*step);
+    ctx.closePath();
+    ctx.fillStyle=colors[i%colors.length];
+    ctx.fill();
+    ctx.strokeStyle='#f5c542'; ctx.lineWidth=2; ctx.stroke();
+
+    ctx.save();
+    ctx.translate(center,center);
+    ctx.rotate(i*step+step/2);
+    ctx.fillStyle='#ffffff';
+    ctx.font='bold 16px Arial';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+
+    const words=list[i].name.split(' ');
+    let lines=[], cur=words[0];
+    for(let j=1;j<words.length;j++){
+      if(ctx.measureText(cur+' '+words[j]).width>radius*.8 && cur!==''){
+        lines.push(cur); cur=words[j];
+      }else cur+=' '+words[j];
+    }
+    lines.push(cur);
+    const lh=18, startY=-(lines.length-1)*lh/2;
+    lines.forEach((L,k)=>ctx.fillText(L,radius*.6,startY+k*lh));
+    ctx.restore();
+  }
+
+  ctx.beginPath();
+  ctx.arc(center,center,80,0,2*Math.PI);
+  ctx.fillStyle='#1a1a2e'; ctx.fill();
+  ctx.strokeStyle='#f5c542'; ctx.lineWidth=5; ctx.stroke();
+}
+
+function showWinnerImage(name,img){
+  const wImg = qs('winnerImg');
+  wImg.src = img;
+  wImg.alt = name;
+  wImg.style.display = 'block';
+  setTimeout(()=> wImg.style.display = 'none', 10000);
+}
+
+function spinWheel(){
+  if(spinning||!getGames().length) {
+    if (!getGames().length) alert('يرجى إضافة ألعاب أولاً');
+    return;
+  }
+  spinning=true;
+  document.getElementById('winner').textContent='';
+
+  const btn = qs('spinButton');
+  btn.disabled = true;
+  btn.textContent = '🔄 جاري التدوير...';
+
+  const turns=5+Math.floor(Math.random()*4);
+  const extra=Math.random()*2*Math.PI;
+  const total=turns*2*Math.PI+extra;
+  angle+=total;
+
+  canvas.style.transition='transform 6s cubic-bezier(0.25,0.46,0.45,0.94)';
+  canvas.style.transform=`rotate(${angle}rad)`;
+
+  setTimeout(()=>{
+    spinning=false; 
+    canvas.style.transition='';
+    btn.disabled = false;
+    btn.textContent = '🎯 تدوير العجلة';
+    
+    const list=getGames();
+    if(!list.length)return;
+    const n=list.length, step=2*Math.PI/n;
+    let idx=Math.floor(((2*Math.PI-angle%(2*Math.PI))+step/2)%(2*Math.PI)/step);
+    idx=(list.length-idx)%list.length;
+    const winner=list[idx];
+    document.getElementById('winner').textContent='الفائز: '+winner.name;
+    showWinnerImage(winner.name,winner.img);
+    list.splice(idx,1); 
+    setGames(list); 
+    renderGamesList();
+  },6000);
+}
+
+/* Enter للإضافة السريعة */
+qs('nameInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') qs('imageInput').focus();
+});
+qs('imageInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') addGame();
+});
+
+/* تهيئة */
+renderGamesList();
+window.addEventListener('storage', renderGamesList);
+</script>
+</body>
+</html>
